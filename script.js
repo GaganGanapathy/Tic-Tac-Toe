@@ -12,7 +12,8 @@ const win =[
 ]
 const cells= document.querySelectorAll("[data-cell]");
 const resultPage=document.querySelector("[data-result");
-console.log(cells[2].innerText)
+const text=document.querySelector(".text")
+
 let turn= true;
 gameStart()
 function gameStart() {
@@ -24,12 +25,15 @@ function gameStart() {
 
 function makeMove(e) {
     const move=e.target;
-    console.log(move)
     const switcher=turn?cross:zero;
     placeMove(switcher,move);
-    playerTurn();
     if (checkResult(switcher)) {
-        updateWinner(switcher);
+        updateWinner(switcher,false);
+    } else if (draw()) {
+        updateWinner(switcher,true)
+    }
+    else {
+        playerTurn()
     }
 }
 
@@ -46,10 +50,14 @@ function checkResult(switcher) {
     })
  })
 }
-function updateWinner(switcher) {
+function updateWinner(switcher,bool) {
     resultPage.classList.add("result");
-    const status=document.querySelector(".text")
-    status.innerText=`${switcher} WIN!`;
+    if(!bool){
+        text.innerText=`${switcher} WIN!`;
+    }
+    if(bool) {
+        text.innerText="DRAW";
+    }
     fireReset();
 }
 function fireReset() {
@@ -61,4 +69,10 @@ function fireReset() {
         })
     })
     gameStart();
+}
+function draw() {
+    return [...cells].every(node=>{
+        return node.innerText!=="";
+        }
+    )
 }
